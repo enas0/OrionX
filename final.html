@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — SkyCue</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  body {
+    background: #000C17;
+    color: white;
+    overflow-x: hidden;
+  }
+
+  video.bg-video {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    z-index: -1;
+    opacity: 0.5;
+  }
+
+  header {
+    text-align: center;
+    padding: 80px 20px 30px;
+    animation: fadeIn 1.5s ease;
+  }
+  header h1 {
+    font-size: 50px;
+    color: #ffcccb;
+    letter-spacing: 1px;
+  }
+  header p {
+    font-size: 20px;
+    opacity: 0.8;
+  }
+
+  /* SECTION GENERAL STYLE */
+  section {
+    max-width: 1000px;
+    margin: 60px auto;
+    padding: 30px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    text-align: center;
+    box-shadow: 0 0 20px rgba(0,0,0,0.4);
+    animation: slideUp 1.2s ease both;
+  }
+  section h2 {
+    color: #ffb4a2;
+    margin-bottom: 15px;
+    font-size: 30px;
+  }
+  section p {
+    font-size: 18px;
+    line-height: 1.7;
+    opacity: 0.9;
+  }
+
+  /* TEAM SECTION */
+  .team {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 30px;
+    margin-top: 40px;
+  }
+  .member {
+    background: rgba(255,255,255,0.1);
+    border-radius: 15px;
+    width: 220px;
+    padding: 25px;
+    transition: 0.4s;
+    opacity: 0;
+    transform: translateY(50px);
+    animation: fadeUp 1s forwards;
+  }
+  .member:nth-child(1){ animation-delay: .3s;}
+  .member:nth-child(2){ animation-delay: .5s;}
+  .member:nth-child(3){ animation-delay: .7s;}
+  .member:nth-child(4){ animation-delay: .9s;}
+  
+  .member:hover {
+    transform: translateY(-6px) scale(1.03);
+    background: rgba(255,255,255,0.18);
+    box-shadow: 0 0 20px rgba(255,255,255,0.15);
+  }
+  .member img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ffb4a2;
+    box-shadow: 0 0 10px rgba(255,180,162,0.5);
+  }
+  .member h3 {
+    margin-top: 15px;
+    color: #ffcccb;
+  }
+  .member span {
+    font-size: 14px;
+    color: #ccc;
+  }
+
+  /* FEEDBACK SECTION */
+  .stars {
+    margin: 20px 0;
+  }
+  .stars i {
+    font-size: 30px;
+    color: #999;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+  .stars i.active {
+    color: #ffb703;
+    transform: scale(1.2);
+  }
+  #feedbackText {
+    font-size: 16px;
+    margin-top: 10px;
+    opacity: 0.9;
+  }
+
+  /* CONTACT SECTION */
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-top: 20px;
+    animation: fadeIn 2s ease;
+  }
+  input, textarea {
+    width: 80%;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 12px;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    font-size: 16px;
+    outline: none;
+  }
+  input::placeholder, textarea::placeholder {
+    color: #ccc;
+  }
+  button {
+    background: #970800;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: 0.3s;
+  }
+  button:hover {
+    background: #7a0600;
+    transform: translateY(-2px);
+  }
+
+  footer {
+    text-align: center;
+    padding: 40px;
+    color: #ccc;
+    font-size: 15px;
+    margin-top: 50px;
+    animation: fadeIn 2s ease;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeIn {
+    from {opacity: 0;}
+    to {opacity: 1;}
+  }
+  @keyframes slideUp {
+    from {opacity: 0; transform: translateY(50px);}
+    to {opacity: 1; transform: translateY(0);}
+  }
+  @keyframes fadeUp {
+    to {opacity: 1; transform: translateY(0);}
+  }
+</style>
+</head>
+<body>
+
+<video autoplay muted loop class="bg-video">
+  <source src="video/NasaVid.mp4" type="video/mp4">
+</video>
+
+<header>
+  <h1>About SkyCue</h1>
+  <p>Smart weather guidance — powered by creativity and code.</p>
+</header>
+
+<section>
+  <h2>About the Project</h2>
+  <p>
+    SkyCue is a modern interactive system designed to make weather prediction 
+    intuitive and visually engaging. It merges real-time data visualization with 
+    elegant front-end interfaces and human-centered design, ensuring that weather 
+    insights feel as smooth as your daily routine.
+  </p>
+</section>
+
+<section>
+  <h2>User Feedback</h2>
+  <p>How satisfied are you with your SkyCue experience?</p>
+  <div class="stars" id="stars">
+    <i class="fa-solid fa-star" data-value="1"></i>
+    <i class="fa-solid fa-star" data-value="2"></i>
+    <i class="fa-solid fa-star" data-value="3"></i>
+    <i class="fa-solid fa-star" data-value="4"></i>
+    <i class="fa-solid fa-star" data-value="5"></i>
+  </div>
+  <div id="feedbackText">Click a star to rate.</div>
+</section>
+
+<section>
+  <h2>Meet the Team</h2>
+  <div class="team">
+    <div class="member">
+      <img src="/Images of participants/Omar mohammed al-mahrouqe.jpg" alt="Omar">
+      <h3>Omar</h3>
+      <span>Full Stack Web Developer</span>
+    </div>
+    <div class="member">
+      <img src="/Images of participants/SedraHussein.jpg" alt="Sidra">
+      <h3>Sidra</h3>
+      <span>UI/UX & Front-End Developer</span>
+    </div>
+    <div class="member">
+      <img src="/Images of participants/EnasAlthaher.jpg" alt="Enas">
+      <h3>Enas</h3>
+      <span>Front-End Developer</span>
+    </div>
+    <div class="member">
+      <img src="" alt="Rama">
+      <h3>Rama</h3>
+      <span>Front-End Developer</span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Have Questions?</h2>
+  <p>We’d love to hear from you! Drop your question below.</p>
+  <form id="contactForm">
+    <input type="text" placeholder="Your Name" required>
+    <input type="email" placeholder="Your Email" required>
+    <textarea rows="4" placeholder="Write your message..."></textarea>
+    <button type="submit">Send Message</button>
+  </form>
+</section>
+
+<footer>
+  &copy; 2025 SkyCue — Created by Omar, Sidra, Enas & Rama.
+</footer>
+
+<script>
+  // Star Rating
+  const stars = document.querySelectorAll('#stars i');
+  const feedbackText = document.getElementById('feedbackText');
+
+  stars.forEach(star => {
+    star.addEventListener('click', () => {
+      const value = star.getAttribute('data-value');
+      stars.forEach(s => s.classList.remove('active'));
+      for (let i = 0; i < value; i++) stars[i].classList.add('active');
+      
+      const messages = [
+        "We'll keep improving!",
+        "Thanks! We'll do better.",
+        "Good! Glad you're satisfied.",
+        "Great! Thanks for your support.",
+        "Awesome! You made our day!"
+      ];
+      feedbackText.textContent = messages[value - 1];
+    });
+  });
+
+  // Contact Form
+  document.getElementById('contactForm').addEventListener('submit', e => {
+    e.preventDefault();
+    alert("Thank you for your message! We'll get back to you soon.");
+    e.target.reset();
+  });
+</script>
+
+</body>
+</html>
