@@ -123,25 +123,32 @@
         }
 
         /* Boxes Section */
-        .boxes {
-            font-size: 2rem;
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            text-align: center;
-            margin-top: 2rem;
-        }
+        /* Boxes Section */
+.boxes {
+  font-size: 2rem;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  text-align: center;
+  margin-top: 2rem;
+}
 
-        .box {
-            width: 30%;
-        padding: 5%;
-            background: linear-gradient(135deg, #2a2a5a 0%, #3a3a7a 100%);
-            border-radius: 15px;
-            border: 2px solid #00d4ff;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
+.box {
+  width: 30%;
+  padding: 5%;
+  background: linear-gradient(135deg, #2a2a5a 0%, #3a3a7a 100%);
+  border-radius: 15px;
+  border: 2px solid #00d4ff;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  color: #cccccc;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
         .box a{
             text-decoration: none;
             color: #8ab8dd;
@@ -356,14 +363,10 @@
             </div>
         </div>
         <!--3 boxes-->
-      <div class="boxes">
-        <div class="box">
-          <a href="plant.html">Where to grow</a>
-        </div>
-        <div class="box">
-          <a href="Rain_Alerts.html">Where to go</a>
-        </div>
-      </div>
+<div class="boxes">
+  <a href="plant.html" class="box">Where to grow</a>
+  <a href="Rain_Alerts.html" class="box">Where to go</a>
+</div>
     </div>
     </div>
     <!--container2-->
