@@ -234,7 +234,34 @@
     .teext{
         color: rgb(106, 121, 156);
     }
+               .back {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        z-index: 1000;
+      }
 
+      .back-button {
+        display: inline-block;
+        padding: 12px 24px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 25px;
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .back-button:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      }
 
 
 
@@ -298,7 +325,9 @@
         <p>To help you best, I need to know a little about your daily routine.</p>
     </div>
 </div>
-
+        <div class="back">
+        <a href="home.html" class="back-button">← Back</a>
+      </div>
 <script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
 <!-- بيانات الطقس -->
 <script>

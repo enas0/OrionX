@@ -40,6 +40,34 @@
     .charts{display:grid;grid-template-columns:1fr 420px;gap:18px}
     .timeline{padding:12px;border-radius:10px;overflow:auto}
     footer{margin-top:18px;color:#9fb0d9;font-size:13px}
+                    .back {
+        position: fixed;
+        bottom: 20px;
+        left: 20px;
+        z-index: 1000;
+      }
+
+      .back-button {
+        display: inline-block;
+        padding: 12px 24px;
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 25px;
+        color: white;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .back-button:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+      }
     @media (max-width:900px){.layout{grid-template-columns:1fr}.charts{grid-template-columns:1fr}}
   </style>
 </head>
@@ -129,7 +157,9 @@
       </footer>
     </main>
   </div>
-
+        <div class="back">
+        <a href="home.html" class="back-button">← Back</a>
+      </div>
 <script>
 // ---------- starfield ----------
 const canvas=document.getElementById('stars'),ctx=canvas.getContext('2d');
