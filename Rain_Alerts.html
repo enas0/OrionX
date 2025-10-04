@@ -5,9 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Rain Alerts</title>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-<style>
 
- * {
+<style>
+        * {
         margin: 0;
         padding: 0;
         box-sizing: border-box;
@@ -51,6 +51,8 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        /* position: absolute;
+        top: 1px; */
     }
 
     /* Astronaut */
@@ -180,33 +182,26 @@
         border-color: #970800;
     }
 
+    .btn {
+        background: #970800;
+        color: white;
+        border: none;
+        padding: 12px 0;
+        border-radius: 20px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 50%;
+        margin-top: 15px;
+        transition: all 0.3s;
+        height: 45px;
+    }
 
-.btn {
-    background: #970800;
-    color: white;
-    border: none;
-    padding: 12px 0;
-    border-radius: 20px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    width: 50%;
-    margin-top: 15px;
-    transition: all 0.3s;
-    height: 45px;
-    display: flex; 
-    align-items: center;
-    justify-content: center; 
-    text-decoration: none;
-}
-
-.btn:hover {
-    background: #7a0600;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    color: white;
-    text-decoration: none;
-}
+    .btn:hover {
+        background: #7a0600;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
 
     /* Responsive Design */
     @media (max-width: 768px) {
@@ -236,13 +231,20 @@
         .speech-bubble p { font-size: 16px; }
     }
 
+    .teext{
+        color: rgb(106, 121, 156);
+    }
+
+
+
+
+    
 </style>
 </head>
 <body>
 <div class="page-background">
     <video autoplay muted loop class="bg-video">
         <source src="video/NasaVid.mp4" type="video/mp4">
-        Your browser does not support HTML5 video.
     </video>
 
     <!-- Form -->
@@ -255,7 +257,6 @@
                     <option>Amman</option>
                     <option>Zarqa</option>
                     <option>Irbid</option>
-                    <option>Aqaba</option>
                 </select>
             </div>
             <div class="field">
@@ -276,11 +277,12 @@
                     <option>Outdoor</option>
                 </select>
             </div>
-            <a href="rain.html" class="btn">View Result</a>
+            <button class="btn">View Result</button>
         </div>
     </div>
 
-    <!-- Astronaut + Bubbles -->
+
+        <!-- Astronaut + Bubbles -->
     <div class="astronaut-container">
         <img src="img/Astronaut1.png" alt="Astronaut" class="astronaut">
         <div class="bubbles">
@@ -292,93 +294,118 @@
 
     <!-- Speech Bubble -->
     <div class="speech-bubble">
-        <h1>Hi again! I'm SkyCue</h1>
-        <p>To help you best, I need to know a little
-             about your daily routine. 
-             Just a few quick questions, then I'll 
-             handle the rest.</p>
+        <h1>Hi again!<span class="teext"> I'm SkyCue</span> </h1>
+        <p>To help you best, I need to know a little about your daily routine.</p>
     </div>
 </div>
 
-<!-- JavaScript -->
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
+<!-- بيانات الطقس -->
 <script>
-// 🔥 هون خليت الـ JSON الكبير كله
+// === Weather Robot Data ===
 const weatherData = {
-  "Amman": {
-    "1-9-2025": { "Precipitation (mm/day)": 0.03 },
-    "2-9-2025": { "Precipitation (mm/day)": 0.1 },
-    "3-9-2025": { "Precipitation (mm/day)": 0.05 },
-    "4-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "5-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "6-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "7-9-2025": { "Precipitation (mm/day)": 0.01 },
-    "8-9-2025": { "Precipitation (mm/day)": 0.01 },
-    "9-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "10-9-2025": { "Precipitation (mm/day)": 0.01 },
-    "11-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "12-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "13-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "14-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "15-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "16-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "17-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "18-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "19-9-2025": { "Precipitation (mm/day)": 0.09 },
-    "20-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "21-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "22-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "23-9-2025": { "Precipitation (mm/day)": 0.0 }
-  },
-  "Irbid": {
-    "1-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "2-9-2025": { "Precipitation (mm/day)": 0.22 },
-    "3-9-2025": { "Precipitation (mm/day)": 0.04 },
-    "4-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "5-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "6-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "7-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "8-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "9-9-2025": { "Precipitation (mm/day)": 0.01 },
-    "10-9-2025": { "Precipitation (mm/day)": 0.01 }
-  },
-  "Zarqa": {
-    "1-9-2025": { "Precipitation (mm/day)": 0.03 },
-    "2-9-2025": { "Precipitation (mm/day)": 0.1 },
-    "3-9-2025": { "Precipitation (mm/day)": 0.05 },
-    "4-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "5-9-2025": { "Precipitation (mm/day)": 0.0 }
-  },
-  "Aqaba": {
-    "1-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "2-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "3-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "4-9-2025": { "Precipitation (mm/day)": 0.0 },
-    "5-9-2025": { "Precipitation (mm/day)": 0.0 }
-  }
+  "Amman": [
+    { "date": "2025-09-17", "precip_mm_day": 0.01, "humidity_pct": 55.0, "wind_speed_ms": 3.2, "temp_day_max_c": 32.2, "temp_night_min_c": 16.7 },
+    { "date": "2025-09-18", "precip_mm_day": 0.0, "humidity_pct": 57.5, "wind_speed_ms": 3.9, "temp_day_max_c": 32.6, "temp_night_min_c": 16.0 },
+    { "date": "2025-09-19", "precip_mm_day": 0.09, "humidity_pct": 59.1, "wind_speed_ms": 4.0, "temp_day_max_c": 31.2, "temp_night_min_c": 19.6 },
+    { "date": "2025-09-20", "precip_mm_day": 0.0, "humidity_pct": 39.5, "wind_speed_ms": 2.2, "temp_day_max_c": 32.6, "temp_night_min_c": 16.8 },
+    { "date": "2025-09-21", "precip_mm_day": 0.0, "humidity_pct": 23.2, "wind_speed_ms": 2.6, "temp_day_max_c": 34.0, "temp_night_min_c": 17.6 },
+    { "date": "2025-09-22", "precip_mm_day": 0.0, "humidity_pct": 22.4, "wind_speed_ms": 3.0, "temp_day_max_c": 34.3, "temp_night_min_c": 18.6 },
+    { "date": "2025-09-23", "precip_mm_day": 0.0, "humidity_pct": 19.7, "wind_speed_ms": 2.6, "temp_day_max_c": 35.1, "temp_night_min_c": 18.7 }
+  ],
+  "Zarqa": [
+    { "date": "2025-09-17", "precip_mm_day": 0.0, "humidity_pct": 57.9, "wind_speed_ms": 3.6, "temp_day_max_c": 33.3, "temp_night_min_c": 18.3 },
+    { "date": "2025-09-18", "precip_mm_day": 0.0, "humidity_pct": 57.5, "wind_speed_ms": 3.95, "temp_day_max_c": 32.63, "temp_night_min_c": 16.03 },
+    { "date": "2025-09-19", "precip_mm_day": 0.09, "humidity_pct": 59.1, "wind_speed_ms": 4.0, "temp_day_max_c": 31.21, "temp_night_min_c": 19.61 },
+    { "date": "2025-09-20", "precip_mm_day": 0.0, "humidity_pct": 39.48, "wind_speed_ms": 2.21, "temp_day_max_c": 32.64, "temp_night_min_c": 16.78 },
+    { "date": "2025-09-21", "precip_mm_day": 0.0, "humidity_pct": 23.21, "wind_speed_ms": 2.61, "temp_day_max_c": 33.96, "temp_night_min_c": 17.58 },
+    { "date": "2025-09-22", "precip_mm_day": 0.0, "humidity_pct": 22.42, "wind_speed_ms": 3.01, "temp_day_max_c": 34.33, "temp_night_min_c": 18.64 },
+    { "date": "2025-09-23", "precip_mm_day": 0.0, "humidity_pct": 19.65, "wind_speed_ms": 2.61, "temp_day_max_c": 35.07, "temp_night_min_c": 18.68 }
+  ],
+  "Irbid": [
+    { "date": "2025-09-17", "precip_mm_day": 0.0, "humidity_pct": 60.64, "wind_speed_ms": 2.49, "temp_day_max_c": 36.04, "temp_night_min_c": 21.78 },
+    { "date": "2025-09-18", "precip_mm_day": 0.0, "humidity_pct": 62.01, "wind_speed_ms": 2.81, "temp_day_max_c": 35.0, "temp_night_min_c": 19.84 },
+    { "date": "2025-09-19", "precip_mm_day": 0.04, "humidity_pct": 58.43, "wind_speed_ms": 2.69, "temp_day_max_c": 34.72, "temp_night_min_c": 22.18 },
+    { "date": "2025-09-20", "precip_mm_day": 0.0, "humidity_pct": 41.48, "wind_speed_ms": 2.09, "temp_day_max_c": 36.11, "temp_night_min_c": 19.73 },
+    { "date": "2025-09-21", "precip_mm_day": 0.0, "humidity_pct": 29.91, "wind_speed_ms": 2.18, "temp_day_max_c": 38.16, "temp_night_min_c": 19.84 },
+    { "date": "2025-09-22", "precip_mm_day": 0.0, "humidity_pct": 31.73, "wind_speed_ms": 2.48, "temp_day_max_c": 38.33, "temp_night_min_c": 20.84 },
+    { "date": "2025-09-23", "precip_mm_day": 0.0, "humidity_pct": 37.82, "wind_speed_ms": 2.33, "temp_day_max_c": 38.31, "temp_night_min_c": 21.06 }
+  ]
 };
-
-// 📌 عند الضغط على الزر
-document.getElementById("resultBtn").addEventListener("click", function() {
-    const city = document.getElementById("where").value;
-
-    if (city === "Please choose one") {
-        alert("⚠️ Please select your city!");
-        return;
-    }
-
-    // نجيب أول تاريخ موجود للمدينة
-    const cityData = weatherData[city];
-    const firstDate = Object.keys(cityData)[0]; // مثلاً "1-9-2025"
-    const precipitation = cityData[firstDate]["Precipitation (mm/day)"];
-
-    // التحويل حسب المطر
-    if (precipitation > 0) {
-        window.location.href = "Rainny.html";
-    } else {
-        window.location.href = "Sunny.html";
-    }
-});
 </script>
+
+<script>
+// === Interactive Weather Robot ===
+document.querySelector(".btn").addEventListener("click", function () {
+  const city = document.getElementById("where").value;
+  const transport = document.getElementById("how").value;
+  const job = document.getElementById("job").value;
+
+  if (city.includes("Please") || transport.includes("Please") || job.includes("Please")) {
+    alert("Please fill all fields before proceeding.");
+    return;
+  }
+
+  const today = "2025-09-23";
+  const cityData = weatherData[city]?.find(d => d.date === today);
+  if (!cityData) {
+    alert("No weather data found for this date or city.");
+    return;
+  }
+
+  // --- Weather Summary ---
+  let summary = "";
+  if (cityData.temp_day_max_c >= 35) {
+    summary = "Today is extremely hot. Staying indoors during peak hours is advisable.";
+  } else if (cityData.temp_day_max_c >= 28) {
+    summary = "Warm and pleasant weather expected today, ideal for outdoor plans.";
+  } else if (cityData.precip_mm_day > 0) {
+    summary = "Rainfall is expected today. Carry an umbrella or a light jacket.";
+  } else if (cityData.humidity_pct > 70) {
+    summary = "High humidity levels may make the temperature feel warmer.";
+  } else {
+    summary = "Stable and mild weather conditions throughout the day.";
+  }
+
+  // --- Activity Recommendation ---
+  let advice = "";
+  if (cityData.precip_mm_day > 0 && transport === "Walk/Bike") {
+    advice = "Walking or biking is not recommended due to expected rainfall.";
+  } else if (cityData.wind_speed_ms > 5 && job === "Outdoor") {
+    advice = "Strong winds may affect outdoor work. Ensure safety precautions are in place.";
+  } else if (job === "Office") {
+    advice = "Weather remains stable. Consider short outdoor breaks for fresh air.";
+  } else if (job === "Student" && cityData.temp_day_max_c < 20) {
+    advice = "It is slightly cold today. Dress appropriately for your commute.";
+  } else {
+    advice = "Weather conditions are suitable for all regular activities today.";
+  }
+
+  // --- Display Result ---
+  document.querySelector(".speech-bubble").innerHTML = `
+    <h1>Weather Robot — ${city}</h1>
+    <p>${summary}</p>
+    <p><strong>Recommendation:</strong> ${advice}</p>
+  `;
+});
+
+
+
+
+
+
+
+    var typed = new Typed(".teext", {
+      strings: ["I'm SkyCue", "Your Weather Assistant", "Here to Guide You!"],
+      typeSpeed: 70,
+      backSpeed: 70,
+      backDelay: 70,
+      loop: true
+    });
+
+
+</script>
+
 
 </body>
 </html>
