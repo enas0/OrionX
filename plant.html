@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Your Perfect Spot</title>
+
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Poppins", sans-serif;
+  }
+
+  body {
+    overflow: hidden;
+    height: 100vh;
+    width: 100%;
+    background: #aee1f9; /* لون السماء */
+    position: relative;
+  }
+
+  /* ===== الخلفية بالفيديو ===== */
+  .page-background {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  .bg-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+  }
+
+  /* ===== الأرض والنبات ===== */
+  body::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 35vh;
+    
+    z-index: -1;
+  }
+
+  /* ===== النصوص ===== */
+  .content {
+    position: absolute;
+    top: 15%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+    width: 500px;
+    background: rgba(255, 255, 255, 0.7);
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 25px rgba(0,0,0,0.15);
+  }
+
+  .text h2 {
+    font-size: 38px;
+    font-weight: 300;
+    color: #123;
+    margin-bottom: 5px;
+  }
+
+  .text h3 {
+    font-size: 36px;
+    font-weight: 700;
+    color: #000;
+    letter-spacing: 1px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  .text h4 {
+    font-size: 32px;
+    margin-top: 10px;
+    color: #222;
+  }
+
+  .text h4 strong {
+    background: #4b2c14;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 5px;
+  }
+
+  /* ===== الوصف ===== */
+  .cont p {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #333;
+  }
+
+  .cont h6 {
+    font-size: 17px;
+    font-weight: 600;
+    color: #3b1e0b;
+    margin-top: 20px;
+    margin-bottom: 8px;
+  }
+
+  /* ===== القائمة المنسدلة ===== */
+  select {
+    width: 70%;
+    height: 40px;
+    border: none;
+    border-radius: 8px;
+    background-color: #4b2c14;
+    color: white;
+    font-size: 15px;
+    text-align: center;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  select:hover {
+    background-color: #6a4021;
+  }
+
+  /* ===== الشمس ===== */
+  .sun {
+    position: absolute;
+    top: 10%;
+    right: 10%;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle at center, #ffe873, #f9c74f);
+    border-radius: 50%;
+    box-shadow: 0 0 40px 10px #ffe873;
+    animation: sunGlow 4s ease-in-out infinite alternate;
+  }
+
+  @keyframes sunGlow {
+    from { transform: scale(1); opacity: 0.9; }
+    to { transform: scale(1.1); opacity: 1; }
+  }
+
+</style>
+</head>
+<body>
+
+<div class="page-background">
+  <video autoplay muted loop class="bg-video" id="bgVideo">
+    <source src="video/plantVid.mp4" type="video/mp4"/>
+  </video>
+
+  <div class="sun"></div>
+
+  <div class="content">
+    <div class="text">
+      <h2>Find Your</h2>
+      <h3>Perfect Spot</h3>
+      <h4>to <strong>Grow</strong></h4>
+    </div>
+    <div class="cont">
+      <p>Pick a city to see rainfall insights and your chances of successful planting</p>
+      <h6>Select the country :</h6>
+      <select id="where">
+        <option>Please choose one</option>
+        <option>Amman</option>
+        <option>Zarqa</option>
+        <option>Irbid</option>
+        <option>Aqaba</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
