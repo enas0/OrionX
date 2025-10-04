@@ -230,6 +230,14 @@
         .speech-bubble h1 { font-size: 22px; }
         .speech-bubble p { font-size: 16px; }
     }
+
+    .teext{
+        color: rgb(106, 121, 156);
+    }
+
+
+
+
     
 </style>
 </head>
@@ -286,12 +294,12 @@
 
     <!-- Speech Bubble -->
     <div class="speech-bubble">
-        <h1>Hi again! I'm SkyCue</h1>
+        <h1>Hi again!<span class="teext"> I'm SkyCue</span> </h1>
         <p>To help you best, I need to know a little about your daily routine.</p>
     </div>
 </div>
 
-
+<script src="https://cdn.jsdelivr.net/npm/typed.js@2.0.12"></script>
 <!-- بيانات الطقس -->
 <script>
 // === Weather Robot Data ===
@@ -380,6 +388,22 @@ document.querySelector(".btn").addEventListener("click", function () {
     <p><strong>Recommendation:</strong> ${advice}</p>
   `;
 });
+
+
+
+
+
+
+
+    var typed = new Typed(".teext", {
+      strings: ["I'm SkyCue", "Your Weather Assistant", "Here to Guide You!"],
+      typeSpeed: 70,
+      backSpeed: 70,
+      backDelay: 70,
+      loop: true
+    });
+
+
 </script>
 
 
