@@ -120,7 +120,7 @@
   <footer>Demo concept — can be linked to live NASA/NOAA APIs.</footer>
 
   <script>
-    // Background animation (stars + meteors)
+    /* ========= Background animation (stars + meteors) ========= */
     const starCanvas = document.getElementById('starfield');
     const sctx = starCanvas.getContext('2d');
     let stars=[], meteors=[]; let w=innerWidth, h=innerHeight; let smooth=false;
@@ -156,14 +156,132 @@
     draw();
     document.getElementById('btn-smooth').onclick=()=>smooth=!smooth;
 
-    // Simulated Data
-    function generateDemoSample(){
-      const wind=300+Math.random()*450;
-      const density=1+Math.random()*15;
-      const kp=Math.max(0,Math.min(9,Math.round(Math.random()*7+(wind>600?1.8:0)+(density>10?0.8:0))));
-      const rad=0.05+Math.random()*0.35;
-      return {wind,density,kp,rad};
+    /* ================== Your NASA daily dataset ================== */
+    const MISSING = -999;
+    const nasaData = {
+      "meta": {
+        "requested_by_api_key": true,
+        "latitude": 31.95,
+        "longitude": 35.93,
+        "start_date": "20251001",
+        "end_date": "20251004",
+        "variables_requested": ["T2M","RH2M","PRECTOTCORR","WS10M","ALLSKY_SFC_SW_DWN"],
+        "default_surface_pressure_Pa": 101325.0
+      },
+      "daily": [
+        {
+          "date": "20251001",
+          "T2M_C": 24.09,
+          "RH2M_pct": 60.84,
+          "PRECTOTCORR_mm_day": 0.05,
+          "WS10M_m_s": 2.63,
+          "ALLSKY_SFC_SW_DWN_W_m2": -999.0
+        },
+        {
+          "date": "20251002",
+          "T2M_C": -999.0, "RH2M_pct": -999.0, "PRECTOTCORR_mm_day": -999.0,
+          "WS10M_m_s": -999.0, "ALLSKY_SFC_SW_DWN_W_m2": -999.0
+        },
+        {
+          "date": "20251003",
+          "T2M_C": -999.0, "RH2M_pct": -999.0, "PRECTOTCORR_mm_day": -999.0,
+          "WS10M_m_s": -999.0, "ALLSKY_SFC_SW_DWN_W_m2": -999.0
+        },
+        {
+          "date": "20251004",
+          "T2M_C": -999.0, "RH2M_pct": -999.0, "PRECTOTCORR_mm_day": -999.0,
+          "WS10M_m_s": -999.0, "ALLSKY_SFC_SW_DWN_W_m2": -999.0
+        }
+      ]
+    };
+
+    /* ===== Helpers to read dataset and (if needed) fetch fallback from NASA POWER ===== */
+    function pickLatestValidDay(data){
+      const valid = (data.daily||[]).filter(d =>
+        d.WS10M_m_s !== MISSING && d.RH2M_pct !== MISSING && d.T2M_C !== MISSING
+      );
+      if(!valid.length) return null;
+      valid.sort((a,b)=> b.date.localeCompare(a.date));
+      return valid[0];
     }
+
+    async function fetchNasaFallback(lat, lon, start, end){
+      try{
+        const url = `https://power.larc.nasa.gov/api/temporal/daily/point?parameters=T2M,RH2M,PRECTOTCORR,WS10M,ALLSKY_SFC_SW_DWN&latitude=${lat}&longitude=${lon}&start=${start}&end=${end}&format=JSON`;
+        const resp = await fetch(url);
+        if(!resp.ok) throw new Error('POWER fetch failed');
+        const j = await resp.json();
+        const p = j?.properties?.parameter || {};
+        const dates = Object.keys(p.T2M || {});
+        if(!dates.length) return null;
+        dates.sort(); const last = dates[dates.length-1];
+        return {
+          date: last,
+          T2M_C: p.T2M?.[last] ?? MISSING,
+          RH2M_pct: p.RH2M?.[last] ?? MISSING,
+          PRECTOTCORR_mm_day: p.PRECTOTCORR?.[last] ?? 0,
+          WS10M_m_s: p.WS10M?.[last] ?? MISSING,
+          // POWER daily ALLSKY_SFC_SW_DWN عادة تكون (kWh/m²/day) أو MJ/m²/day حسب الإعداد؛
+          // سنحوّلها بشكل تقريبي إلى مكافئ "شدة آنية" (0..1000) لأغراض التطبيع فقط.
+          ALLSKY_SFC_SW_DWN_W_m2: (() => {
+            const v = p.ALLSKY_SFC_SW_DWN?.[last];
+            if(v==null) return MISSING;
+            // لو كانت kWh/m²/day ~ 0..8 → نحولها إلى 0..1000 W/m² تقريبًا
+            return Math.min(1000, Math.max(0, v * 125));
+          })()
+        };
+      }catch(e){
+        console.warn('NASA POWER fallback error:', e);
+        return null;
+      }
+    }
+
+    function clamp(v,min,max){return Math.max(min,Math.min(max,v));}
+    function jitterArray(n, base, span){
+      return Array.from({length:n},()=> base + (Math.random()*2-1)*span);
+    }
+
+    function estimateSpaceMetrics(day){
+      // تحويل بيانات الطقس الأرضية إلى مؤشرات فضائية "شكلية" للحفاظ على طابع الواجهة
+      // Solar Wind (km/s): أساس 300 + عامل من رياح 10م
+      const wind = 300 + (day.WS10M_m_s||0)*50; // 300..~800
+      // Proton Density (/cm³): RH/10 + قليل من المطر
+      const density = clamp((day.RH2M_pct>0?day.RH2M_pct:0)/10 + Math.max(0, day.PRECTOTCORR_mm_day||0), 0.5, 20);
+      // Radiation (μSv/h): من الإشعاع الشمسي (مطبع إلى 0.05..0.35). لو ناقص نشتق من الحرارة
+      let rad;
+      if(day.ALLSKY_SFC_SW_DWN_W_m2 !== MISSING && day.ALLSKY_SFC_SW_DWN_W_m2 >= 0){
+        const irr = clamp(day.ALLSKY_SFC_SW_DWN_W_m2, 0, 1000);
+        rad = 0.05 + (irr/1000)*0.30; // 0.05..0.35
+      }else{
+        const t = Math.max(0, day.T2M_C||0);
+        rad = clamp(0.08 + t*0.005, 0.05, 0.35);
+      }
+      // Kp (0..9): تابع مبسّط يعتمد على الرياح والكثافة
+      const kp = clamp(Math.round(((wind-300)/120) + (density/8)), 0, 9);
+
+      return { wind, density, kp, rad };
+    }
+
+    async function sampleFromNasa(){
+      // جرّب أحدث يوم صالح من داتك
+      let day = pickLatestValidDay(nasaData);
+      if(!day){
+        // جلب بديل من POWER لو كل القيم -999
+        const m = nasaData.meta || {};
+        day = await fetchNasaFallback(m.latitude||31.95, m.longitude||35.93, m.start_date||'20251001', m.end_date||'20251004');
+      }
+      if(!day){
+        // آخر دفاع: قيم هادئة كي لا تنكسر الواجهة
+        return { wind: 380, density: 6, kp: 3, rad: 0.12, _fallback:true };
+      }
+      return estimateSpaceMetrics(day);
+    }
+
+    /* ================= Replace random sample with NASA-driven sample ================= */
+    async function generateDemoSample(){
+      return await sampleFromNasa();
+    }
+
     function narrative({wind,density,kp,rad}){
       const mood=kp>=7?'severe':kp>=5?'active':kp>=3?'moderate':'calm';
       const feel=[
@@ -175,8 +293,9 @@
       const feelingLine=kp>=6?'You would see auroras shimmering below while sensors hum.':kp>=4?'Minor flickers in your spacecraft instruments.':'A serene cosmic calm surrounds you.';
       return `${feel.join(' • ')}.<br>${feelingLine}`;
     }
-    function updateAll(){
-      const d=generateDemoSample();
+
+    async function updateAll(){
+      const d = await generateDemoSample();
       document.getElementById('badge-kp').textContent=`Kp: ${d.kp}`;
       document.getElementById('badge-wind').textContent=`Solar Wind: ${d.wind.toFixed(1)} km/s`;
       document.getElementById('badge-density').textContent=`Proton Density: ${d.density.toFixed(1)} /cm³`;
@@ -187,21 +306,51 @@
     }
     document.getElementById('btn-refresh').onclick=updateAll;
 
-    // Charts
+    /* ================= Charts (now centered around NASA-based values) ================= */
     let charts={};
     function drawCharts(d){
       if(charts.wind)Object.values(charts).forEach(c=>c.destroy());
       const hours=Array.from({length:24},(_,i)=>`${i}:00`);
-      const windData=hours.map(()=>300+Math.random()*450);
-      const kpData=Array.from({length:12},()=>Math.round(Math.random()*8));
-      const densityData=Array.from({length:24},()=>1+Math.random()*12);
 
-      charts.wind=new Chart(document.getElementById('ch-wind'),{type:'line',data:{labels:hours,datasets:[{label:'Wind Speed (km/s)',data:windData,borderColor:'#6ad7ff',fill:false,tension:0.4}]},options:{plugins:{legend:{labels:{color:'#e9f2ff'}}},scales:{x:{ticks:{color:'#a7b3c7'}},y:{ticks:{color:'#a7b3c7'}}}}});
-      charts.kp=new Chart(document.getElementById('ch-kp'),{type:'bar',data:{labels:Array.from({length:12},(_,i)=>`+${i}h`),datasets:[{label:'Kp Index',data:kpData,backgroundColor:'#a78bfa88'}]},options:{plugins:{legend:{labels:{color:'#e9f2ff'}}},scales:{x:{ticks:{color:'#a7b3c7'}},y:{ticks:{color:'#a7b3c7'}}}}});
-      charts.density=new Chart(document.getElementById('ch-density'),{type:'line',data:{labels:hours,datasets:[{label:'Proton Density (/cm³)',data:densityData,borderColor:'#57b5e0',backgroundColor:'rgba(87,181,224,0.15)',fill:true,tension:0.4}]},options:{plugins:{legend:{labels:{color:'#e9f2ff'}}},scales:{x:{ticks:{color:'#a7b3c7'}},y:{ticks:{color:'#a7b3c7'}}}}});
-      charts.radar=new Chart(document.getElementById('ch-radar'),{type:'radar',data:{labels:['Geomagnetic','Radiation','Satellite','Navigation'],datasets:[{label:'Risk (%)',data:[d.kp*11,d.rad*100,Math.min(100,d.wind/8),Math.min(100,d.density*8)],backgroundColor:'rgba(106,215,255,0.25)',borderColor:'#6ad7ff'}]},options:{scales:{r:{angleLines:{color:'#333'},grid:{color:'#444'},pointLabels:{color:'#e9f2ff'}}},plugins:{legend:{labels:{color:'#e9f2ff'}}}}});
+      // نولد بيانات حول القيمة الأساسية (بدون تغيير شكل المخططات)
+      const windData = jitterArray(24, clamp(d.wind, 300, 800), 40).map(v=>clamp(v,300,800));
+      const kpData   = Array.from({length:12},()=> clamp(Math.round(d.kp + (Math.random()*2-1)*1.2), 0, 9));
+      const densityData = jitterArray(24, clamp(d.density,0.5,20), 1.2).map(v=>clamp(v,0.5,20));
+
+      charts.wind=new Chart(document.getElementById('ch-wind'),{
+        type:'line',
+        data:{labels:hours,datasets:[{label:'Wind Speed (km/s)',data:windData,borderColor:'#6ad7ff',fill:false,tension:0.4}]},
+        options:{plugins:{legend:{labels:{color:'#e9f2ff'}}},scales:{x:{ticks:{color:'#a7b3c7'}},y:{ticks:{color:'#a7b3c7'}}}}
+      });
+
+      charts.kp=new Chart(document.getElementById('ch-kp'),{
+        type:'bar',
+        data:{labels:Array.from({length:12},(_,i)=>`+${i}h`),datasets:[{label:'Kp Index',data:kpData,backgroundColor:'#a78bfa88'}]},
+        options:{plugins:{legend:{labels:{color:'#e9f2ff'}}},scales:{x:{ticks:{color:'#a7b3c7'}},y:{ticks:{color:'#a7b3c7'}}}}
+      });
+
+      charts.density=new Chart(document.getElementById('ch-density'),{
+        type:'line',
+        data:{labels:hours,datasets:[{label:'Proton Density (/cm³)',data:densityData,borderColor:'#57b5e0',backgroundColor:'rgba(87,181,224,0.15)',fill:true,tension:0.4}]},
+        options:{plugins:{legend:{labels:{color:'#e9f2ff'}}},scales:{x:{ticks:{color:'#a7b3c7'}},y:{ticks:{color:'#a7b3c7'}}}}
+      });
+
+      charts.radar=new Chart(document.getElementById('ch-radar'),{
+        type:'radar',
+        data:{labels:['Geomagnetic','Radiation','Satellite','Navigation'],
+          datasets:[{label:'Risk (%)',
+            data:[
+              d.kp*11,
+              d.rad*100,
+              Math.min(100,d.wind/8),
+              Math.min(100,d.density*8)
+            ],
+            backgroundColor:'rgba(106,215,255,0.25)',borderColor:'#6ad7ff'}]},
+        options:{scales:{r:{angleLines:{color:'#333'},grid:{color:'#444'},pointLabels:{color:'#e9f2ff'}}},plugins:{legend:{labels:{color:'#e9f2ff'}}}}
+      });
     }
 
+    // أول تحديث
     updateAll();
   </script>
 </body>
