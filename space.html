@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Space Weather – Cosmic Forecast</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700;900&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root{
+      --bg:#050616;
+      --bg-2:#0a0e2a;
+      --accent:#6ad7ff;
+      --accent-2:#a78bfa;
+      --glass: rgba(255,255,255,.06);
+      --text:#e9f2ff;
+      --muted:#a7b3c7;
+      --card-radius: 22px;
+      --shadow: 0 10px 40px rgba(0,0,0,.35);
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:"Poppins",sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 700px at 80% 10%, #1e0b5b 0%, transparent 60%),
+                  radial-gradient(900px 500px at 20% 20%, #0b3b6a 0%, transparent 55%),
+                  radial-gradient(700px 400px at 30% 80%, #1d1b4e 0%, transparent 60%),
+                  linear-gradient(180deg, var(--bg) 0%, var(--bg-2) 100%);
+      overflow-x:hidden;
+    }
+    #starfield{position:fixed;inset:0;z-index:-1;background:transparent}
+    .glow{position:fixed;filter:blur(60px);opacity:.6;pointer-events:none;z-index:-1}
+    .glow.one{width:900px;height:900px;right:-200px;top:-200px;background:radial-gradient(circle,#6ad7ff55,#0000)}
+    .glow.two{width:800px;height:800px;left:-150px;bottom:-150px;background:radial-gradient(circle,#a78bfa55,#0000)}
+
+    header.hero{
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:120px 24px 64px;
+    }
+    .hero-inner{
+      width:min(1100px,94vw);
+      text-align:center;
+      animation:floatIn 900ms cubic-bezier(.2,.85,.2,1) both;
+    }
+    @keyframes floatIn{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+    .title{font-size:clamp(28px,6vw,54px);font-weight:900;text-shadow:0 6px 30px rgba(106,215,255,.25);}
+    .subtitle{font-size:clamp(16px,2.3vw,22px);color:var(--muted);margin-top:10px}
+    .glass{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);backdrop-filter:blur(10px);border-radius:var(--card-radius);box-shadow:var(--shadow);}
+    .panel{padding:18px}
+    .status-badges{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin:16px 0}
+    .badge{padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);font-weight:700;font-size:14px;}
+    .cta{display:flex;gap:12px;justify-content:center;margin-top:10px;flex-wrap:wrap}
+    .btn{cursor:pointer;border:0;padding:12px 18px;border-radius:14px;font-weight:800;font-size:16px}
+    .btn-primary{color:#001521;background:linear-gradient(180deg,var(--accent),#57b5e0)}
+    .btn-ghost{color:var(--text);background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14)}
+    section{padding:56px 20px}
+    .container{width:min(1200px,96vw);margin:auto}
+    .cards{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+    .card h3{margin:6px 0;font-size:20px}
+    .meta{font-size:13px;color:var(--muted)}
+    canvas.chart{width:100%;height:320px}
+    footer{text-align:center;padding:40px 20px;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <canvas id="starfield"></canvas>
+  <div class="glow one"></div>
+  <div class="glow two"></div>
+
+  <header class="hero">
+    <div class="hero-inner">
+      <h1 class="title">Space Weather – Cosmic Forecast</h1>
+      <p class="subtitle">Experience what space feels like: solar winds, radiation, and geomagnetic storms visualized beautifully.</p>
+      <div class="status-badges">
+        <div class="badge" id="badge-kp">Kp: --</div>
+        <div class="badge" id="badge-wind">Solar Wind: -- km/s</div>
+        <div class="badge" id="badge-density">Proton Density: -- /cm³</div>
+        <div class="badge" id="badge-rad">Radiation: -- μSv/h</div>
+      </div>
+      <div class="cta">
+        <button class="btn btn-primary" id="btn-refresh">Refresh Forecast</button>
+        <button class="btn btn-ghost" id="btn-smooth">Toggle Smooth Mode</button>
+      </div>
+      <div class="glass panel" style="margin-top:30px">
+        <h2>Current Cosmic Conditions</h2>
+        <p class="meta" id="timestamp">--:--</p>
+        <p id="feel" style="margin-top:10px">Loading data...</p>
+      </div>
+    </div>
+  </header>
+
+  <section>
+    <div class="container">
+      <h2 style="margin-bottom:16px">Statistical Insights</h2>
+      <div class="cards">
+        <div class="card glass panel">
+          <h3>Solar Wind Speed – Last 24h</h3>
+          <canvas class="chart" id="ch-wind"></canvas>
+        </div>
+        <div class="card glass panel">
+          <h3>Kp Index Forecast – Next Hours</h3>
+          <canvas class="chart" id="ch-kp"></canvas>
+        </div>
+        <div class="card glass panel">
+          <h3>Proton Density – Trend</h3>
+          <canvas class="chart" id="ch-density"></canvas>
+        </div>
+        <div class="card glass panel">
+          <h3>Risk Profile</h3>
+          <canvas class="chart" id="ch-radar"></canvas>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>Demo concept — can be linked to live NASA/NOAA APIs.</footer>
+
+  <script>
+    // Background animation (stars + meteors)
+    const starCanvas = document.getElementById('starfield');
+    const sctx = starCanvas.getContext('2d');
+    let stars=[], meteors=[]; let w=innerWidth, h=innerHeight; let smooth=false;
+    function resize(){w=starCanvas.width=innerWidth;h=starCanvas.height=innerHeight;}
+    addEventListener('resize',resize);resize();
+    function makeStar(){return{x:Math.random()*w,y:Math.random()*h,r:Math.random()*1.2+0.2,v:Math.random()*0.2+0.05,tw:Math.random()*1}}
+    for(let i=0;i<340;i++)stars.push(makeStar());
+    function spawnMeteor(){const dir=Math.random()*Math.PI/4+Math.PI;meteors.push({x:Math.random()*w,y:-40,vx:Math.cos(dir)*(2+Math.random()*1.5),vy:Math.sin(dir)*(2+Math.random()*1.5),life:0,max:180})}
+    setInterval(()=>{if(Math.random()<.35)spawnMeteor()},2000);
+    function draw(){
+      sctx.clearRect(0,0,w,h);
+      for(const s of stars){
+        s.tw+=0.02+(smooth?0.05:0);
+        const alpha=0.5+Math.sin(s.tw)*0.5;
+        sctx.fillStyle=`rgba(255,255,255,${alpha})`;
+        s.x+=s.v*(smooth?1.8:1);
+        if(s.x>w){s.x=0;s.y=Math.random()*h}
+        sctx.beginPath();sctx.arc(s.x,s.y,s.r,0,Math.PI*2);sctx.fill();
+      }
+      for(const m of meteors){
+        m.life++;
+        sctx.strokeStyle='rgba(255,255,255,.75)';
+        sctx.lineWidth=2;
+        sctx.beginPath();
+        sctx.moveTo(m.x,m.y);
+        sctx.lineTo(m.x-m.vx*12,m.y-m.vy*12);
+        sctx.stroke();
+        m.x+=m.vx;m.y+=m.vy;
+      }
+      meteors=meteors.filter(m=>m.life<m.max&&m.y<h+60);
+      requestAnimationFrame(draw);
+    }
+    draw();
+    document.getElementById('btn-smooth').onclick=()=>smooth=!smooth;
+
+    // Simulated Data
+    function generateDemoSample(){
+      const wind=300+Math.random()*450;
+      const density=1+Math.random()*15;
+      const kp=Math.max(0,Math.min(9,Math.round(Math.random()*7+(wind>600?1.8:0)+(density>10?0.8:0))));
+      const rad=0.05+Math.random()*0.35;
+      return {wind,density,kp,rad};
+    }
+    function narrative({wind,density,kp,rad}){
+      const mood=kp>=7?'severe':kp>=5?'active':kp>=3?'moderate':'calm';
+      const feel=[
+        `Solar wind is ${wind>600?'intense':wind>450?'fast':'gentle'} (${wind.toFixed(1)} km/s)`,
+        `Proton density is ${density>10?'high':density>5?'medium':'low'}`,
+        `Geomagnetic field is ${mood} (Kp=${kp})`,
+        `Radiation is ${rad>0.28?'elevated':rad>0.18?'moderate':'safe'}`
+      ];
+      const feelingLine=kp>=6?'You would see auroras shimmering below while sensors hum.':kp>=4?'Minor flickers in your spacecraft instruments.':'A serene cosmic calm surrounds you.';
+      return `${feel.join(' • ')}.<br>${feelingLine}`;
+    }
+    function updateAll(){
+      const d=generateDemoSample();
+      document.getElementById('badge-kp').textContent=`Kp: ${d.kp}`;
+      document.getElementById('badge-wind').textContent=`Solar Wind: ${d.wind.toFixed(1)} km/s`;
+      document.getElementById('badge-density').textContent=`Proton Density: ${d.density.toFixed(1)} /cm³`;
+      document.getElementById('badge-rad').textContent=`Radiation: ${d.rad.toFixed(2)} μSv/h`;
+      document.getElementById('timestamp').textContent=new Date().toLocaleString();
+      document.getElementById('feel').innerHTML=narrative(d);
+      drawCharts(d);
+    }
+    document.getElementById('btn-refresh').onclick=updateAll;
+
+    // Charts
+    let charts={};
+    function drawCharts(d){
+      if(charts.wind)Object.values(charts).forEach(c=>c.destroy());
+      const hours=Array.from({length:24},(_,i)=>`${i}:00`);
+      const windData=hours.map(()=>300+Math.random()*450);
+      const kpData=Array.from({length:12},()=>Math.round(Math.random()*8));
+      const densityData=Array.from({length:24},()=>1+Math.random()*12);
+
+      charts.wind=new Chart(document.getElementById('ch-wind'),{type:'line',data:{labels:hours,datasets:[{label:'Wind Speed (km/s)',data:windData,borderColor:'#6ad7ff',fill:false,tension:0.4}]},options:{plugins:{legend:{labels:{color:'#e9f2ff'}}},scales:{x:{ticks:{color:'#a7b3c7'}},y:{ticks:{color:'#a7b3c7'}}}}});
+      charts.kp=new Chart(document.getElementById('ch-kp'),{type:'bar',data:{labels:Array.from({length:12},(_,i)=>`+${i}h`),datasets:[{label:'Kp Index',data:kpData,backgroundColor:'#a78bfa88'}]},options:{plugins:{legend:{labels:{color:'#e9f2ff'}}},scales:{x:{ticks:{color:'#a7b3c7'}},y:{ticks:{color:'#a7b3c7'}}}}});
+      charts.density=new Chart(document.getElementById('ch-density'),{type:'line',data:{labels:hours,datasets:[{label:'Proton Density (/cm³)',data:densityData,borderColor:'#57b5e0',backgroundColor:'rgba(87,181,224,0.15)',fill:true,tension:0.4}]},options:{plugins:{legend:{labels:{color:'#e9f2ff'}}},scales:{x:{ticks:{color:'#a7b3c7'}},y:{ticks:{color:'#a7b3c7'}}}}});
+      charts.radar=new Chart(document.getElementById('ch-radar'),{type:'radar',data:{labels:['Geomagnetic','Radiation','Satellite','Navigation'],datasets:[{label:'Risk (%)',data:[d.kp*11,d.rad*100,Math.min(100,d.wind/8),Math.min(100,d.density*8)],backgroundColor:'rgba(106,215,255,0.25)',borderColor:'#6ad7ff'}]},options:{scales:{r:{angleLines:{color:'#333'},grid:{color:'#444'},pointLabels:{color:'#e9f2ff'}}},plugins:{legend:{labels:{color:'#e9f2ff'}}}}});
+    }
+
+    updateAll();
+  </script>
+</body>
+</html>
