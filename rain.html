@@ -328,14 +328,20 @@
         </div>
 
 
-         <div class="side-box" id="tipsBox">
+         <!-- <div class="side-box" id="tipsBox">
           <h3>Traveler Tips</h3>
           <p>Tips will appear here after you pick a city.</p>
           <ul class="tips-list" id="tipsList"></ul>
-        </div>
+        </div> -->
+
+        <div class="side-box" id="tipsBox">
+  <h3>Traveler Tips</h3>
+  <p>Tips will appear here after you pick a city.</p>
+  <ul class="tips-list" id="tipsList"></ul>
+</div>
 
         
-        <div class="weather-stats">
+        <!-- <div class="weather-stats">
           <h2>Weather Statistics</h2>
           <div class="charts">
             <div class="chart-box">
@@ -344,13 +350,32 @@
             <div class="chart-box">
               <canvas id="lineChart"></canvas>
                <div class="skycue">
-               
+                -->
+
+
+<div class="weather-stats" id="weatherStats">
+  <h2>Weather Statistics</h2>
+  <div class="charts">
+    <div class="chart-box">
+      <canvas id="doughnutChart"></canvas>
+    </div>
+    <div class="chart-box">
+      <canvas id="lineChart"></canvas>
+      <div class="skycue">
+      <!-- ... -->
+
 <div class="cardss">
   <div class="card1"><div id="dayTemp"></div><span id="dayAlert"></span></div>
   <div class="card1"><div id="nightTemp"></div><span id="nightAlert"></span></div>
   <div class="card1"><div id="windSpeed"></div><span id="windAlert"></span></div>
   <div class="card1"><div id="humidity"></div><span id="humidityAlert"></span></div>
 </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
             </div>
            
             </div>
@@ -366,6 +391,78 @@
   </div>
 
   <script>
+
+
+
+
+
+
+
+function applyWeatherColor(latest) {
+  if (!latest) return;
+  // أبيض لو مطر، أسود لو مشمس
+  const color = (latest.precip_mm_day > 0) ? "#ffffff" : "#000000";
+  const selectors = ["#tipsBox", "#weatherStats"];
+
+  selectors.forEach(sel => {
+    const root = document.querySelector(sel);
+    if (!root) return;
+    // لا نغيّر إذا العنصر داخل <section> أو داخل .no-change
+    if (root.closest("section") || root.closest(".no-change")) return;
+
+    // غيّر لون العنصر الجذري (سيؤثر على النصوص الموروثة)
+    try { root.style.color = color; } catch (e) {}
+
+    // غيّر كل العناصر الفرعية باستثناء canvas/svg أو عناصر داخل .no-change
+    root.querySelectorAll("*").forEach(child => {
+      if (!child) return;
+      const tag = child.tagName && child.tagName.toLowerCase();
+      if (tag === "canvas" || tag === "svg") return;
+      if (child.closest && child.closest(".no-change")) return;
+      try { child.style.color = color; } catch (e) {}
+    });
+  });
+
+  // --- تحديث ألوان Chart.js (legend و ticks) إن وُجدت الرسوم ---
+  try {
+    if (window.doughnutChartRef) {
+      doughnutChartRef.options = doughnutChartRef.options || {};
+      doughnutChartRef.options.plugins = doughnutChartRef.options.plugins || {};
+      doughnutChartRef.options.plugins.legend = doughnutChartRef.options.plugins.legend || {};
+      doughnutChartRef.options.plugins.legend.labels = doughnutChartRef.options.plugins.legend.labels || {};
+      doughnutChartRef.options.plugins.legend.labels.color = color;
+      doughnutChartRef.update();
+    }
+    if (window.lineChartRef) {
+      lineChartRef.options = lineChartRef.options || {};
+      lineChartRef.options.plugins = lineChartRef.options.plugins || {};
+      lineChartRef.options.plugins.legend = lineChartRef.options.plugins.legend || {};
+      lineChartRef.options.plugins.legend.labels = lineChartRef.options.plugins.legend.labels || {};
+      lineChartRef.options.plugins.legend.labels.color = color;
+
+      lineChartRef.options.scales = lineChartRef.options.scales || {};
+      if (lineChartRef.options.scales.x) {
+        lineChartRef.options.scales.x.ticks = lineChartRef.options.scales.x.ticks || {};
+        lineChartRef.options.scales.x.ticks.color = color;
+      }
+      if (lineChartRef.options.scales.y) {
+        lineChartRef.options.scales.y.ticks = lineChartRef.options.scales.y.ticks || {};
+        lineChartRef.options.scales.y.ticks.color = color;
+      }
+      lineChartRef.update();
+    }
+  } catch (err) {
+    console.warn("applyWeatherColor: chart update failed", err);
+  }
+}
+
+
+
+
+
+
+
+
     // 1) بيانات المدن
     const weatherData = {
 "Amman": [
@@ -601,6 +698,7 @@
       updateCards(city);
         const latest = getLatestDay(weatherData[city]);
   updateBackgroundVideo(latest);
+  applyWeatherColor(latest);
     }
 
     // 10) تهيئة أولية
@@ -663,6 +761,11 @@ function updateBackgroundVideo(latest) {
   bgVideo.load();  // إعادة تحميل الفيديو الجديد
   bgVideo.play();  // تشغيله مباشرة
 }
+
+
+
+
+
 
 
 
