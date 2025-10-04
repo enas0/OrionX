@@ -180,26 +180,33 @@
         border-color: #970800;
     }
 
-    .btn {
-        background: #970800;
-        color: white;
-        border: none;
-        padding: 12px 0;
-        border-radius: 20px;
-        font-size: 16px;
-        font-weight: 600;
-        cursor: pointer;
-        width: 50%;
-        margin-top: 15px;
-        transition: all 0.3s;
-        height: 45px;
-    }
 
-    .btn:hover {
-        background: #7a0600;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
+.btn {
+    background: #970800;
+    color: white;
+    border: none;
+    padding: 12px 0;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 50%;
+    margin-top: 15px;
+    transition: all 0.3s;
+    height: 45px;
+    display: flex; 
+    align-items: center;
+    justify-content: center; 
+    text-decoration: none;
+}
+
+.btn:hover {
+    background: #7a0600;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    color: white;
+    text-decoration: none;
+}
 
     /* Responsive Design */
     @media (max-width: 768px) {
@@ -269,7 +276,7 @@
                     <option>Outdoor</option>
                 </select>
             </div>
-            <button class="btn" id="resultBtn">View Result</button>
+            <a href="result.html" class="btn">View Result</a>
         </div>
     </div>
 
