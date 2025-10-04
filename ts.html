@@ -51,6 +51,8 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        /* position: absolute;
+        top: 1px; */
     }
 
     /* Astronaut */
@@ -278,69 +280,97 @@
     </div>
 </div>
 
+
 <!-- بيانات الطقس -->
 <script>
+// === Weather Robot Data ===
 const weatherData = {
-  "Amman": {
-    "2025-10-03": { "min": 15, "max": 26, "rainfall": 2.5, "wind": 18 }
-  },
-  "Zarqa": {
-    "2025-10-03": { "min": 17, "max": 29, "rainfall": 0, "wind": 12 }
-  },
-  "Irbid": {
-    "2025-10-03": { "min": 16, "max": 27, "rainfall": 1.2, "wind": 14 }
-  }
+  "Amman": [
+    { "date": "2025-09-17", "precip_mm_day": 0.01, "humidity_pct": 55.0, "wind_speed_ms": 3.2, "temp_day_max_c": 32.2, "temp_night_min_c": 16.7 },
+    { "date": "2025-09-18", "precip_mm_day": 0.0, "humidity_pct": 57.5, "wind_speed_ms": 3.9, "temp_day_max_c": 32.6, "temp_night_min_c": 16.0 },
+    { "date": "2025-09-19", "precip_mm_day": 0.09, "humidity_pct": 59.1, "wind_speed_ms": 4.0, "temp_day_max_c": 31.2, "temp_night_min_c": 19.6 },
+    { "date": "2025-09-20", "precip_mm_day": 0.0, "humidity_pct": 39.5, "wind_speed_ms": 2.2, "temp_day_max_c": 32.6, "temp_night_min_c": 16.8 },
+    { "date": "2025-09-21", "precip_mm_day": 0.0, "humidity_pct": 23.2, "wind_speed_ms": 2.6, "temp_day_max_c": 34.0, "temp_night_min_c": 17.6 },
+    { "date": "2025-09-22", "precip_mm_day": 0.0, "humidity_pct": 22.4, "wind_speed_ms": 3.0, "temp_day_max_c": 34.3, "temp_night_min_c": 18.6 },
+    { "date": "2025-09-23", "precip_mm_day": 0.0, "humidity_pct": 19.7, "wind_speed_ms": 2.6, "temp_day_max_c": 35.1, "temp_night_min_c": 18.7 }
+  ],
+  "Zarqa": [
+    { "date": "2025-09-17", "precip_mm_day": 0.0, "humidity_pct": 57.9, "wind_speed_ms": 3.6, "temp_day_max_c": 33.3, "temp_night_min_c": 18.3 },
+    { "date": "2025-09-18", "precip_mm_day": 0.0, "humidity_pct": 57.5, "wind_speed_ms": 3.95, "temp_day_max_c": 32.63, "temp_night_min_c": 16.03 },
+    { "date": "2025-09-19", "precip_mm_day": 0.09, "humidity_pct": 59.1, "wind_speed_ms": 4.0, "temp_day_max_c": 31.21, "temp_night_min_c": 19.61 },
+    { "date": "2025-09-20", "precip_mm_day": 0.0, "humidity_pct": 39.48, "wind_speed_ms": 2.21, "temp_day_max_c": 32.64, "temp_night_min_c": 16.78 },
+    { "date": "2025-09-21", "precip_mm_day": 0.0, "humidity_pct": 23.21, "wind_speed_ms": 2.61, "temp_day_max_c": 33.96, "temp_night_min_c": 17.58 },
+    { "date": "2025-09-22", "precip_mm_day": 0.0, "humidity_pct": 22.42, "wind_speed_ms": 3.01, "temp_day_max_c": 34.33, "temp_night_min_c": 18.64 },
+    { "date": "2025-09-23", "precip_mm_day": 0.0, "humidity_pct": 19.65, "wind_speed_ms": 2.61, "temp_day_max_c": 35.07, "temp_night_min_c": 18.68 }
+  ],
+  "Irbid": [
+    { "date": "2025-09-17", "precip_mm_day": 0.0, "humidity_pct": 60.64, "wind_speed_ms": 2.49, "temp_day_max_c": 36.04, "temp_night_min_c": 21.78 },
+    { "date": "2025-09-18", "precip_mm_day": 0.0, "humidity_pct": 62.01, "wind_speed_ms": 2.81, "temp_day_max_c": 35.0, "temp_night_min_c": 19.84 },
+    { "date": "2025-09-19", "precip_mm_day": 0.04, "humidity_pct": 58.43, "wind_speed_ms": 2.69, "temp_day_max_c": 34.72, "temp_night_min_c": 22.18 },
+    { "date": "2025-09-20", "precip_mm_day": 0.0, "humidity_pct": 41.48, "wind_speed_ms": 2.09, "temp_day_max_c": 36.11, "temp_night_min_c": 19.73 },
+    { "date": "2025-09-21", "precip_mm_day": 0.0, "humidity_pct": 29.91, "wind_speed_ms": 2.18, "temp_day_max_c": 38.16, "temp_night_min_c": 19.84 },
+    { "date": "2025-09-22", "precip_mm_day": 0.0, "humidity_pct": 31.73, "wind_speed_ms": 2.48, "temp_day_max_c": 38.33, "temp_night_min_c": 20.84 },
+    { "date": "2025-09-23", "precip_mm_day": 0.0, "humidity_pct": 37.82, "wind_speed_ms": 2.33, "temp_day_max_c": 38.31, "temp_night_min_c": 21.06 }
+  ]
 };
 </script>
 
 <script>
+// === Interactive Weather Robot ===
 document.querySelector(".btn").addEventListener("click", function () {
-    const city = document.getElementById("where").value;
-    const transport = document.getElementById("how").value;
-    const job = document.getElementById("job").value;
+  const city = document.getElementById("where").value;
+  const transport = document.getElementById("how").value;
+  const job = document.getElementById("job").value;
 
-    if (city.includes("Please") || transport.includes("Please") || job.includes("Please")) {
-        alert("⚠️ Please fill all fields!");
-        return;
-    }
+  if (city.includes("Please") || transport.includes("Please") || job.includes("Please")) {
+    alert("Please fill all fields before proceeding.");
+    return;
+  }
 
-    const today = "2025-10-03";
-    const data = weatherData[city]?.[today];
-    if (!data) {
-        alert("❌ No data.");
-        return;
-    }
+  const today = "2025-09-23";
+  const cityData = weatherData[city]?.find(d => d.date === today);
+  if (!cityData) {
+    alert("No weather data found for this date or city.");
+    return;
+  }
 
-    // الرسالة الأولى: الطقس العام
-    let summary = "";
-    if (data.max >= 25 && data.min >= 17) {
-        summary = "☀️ اليوم الجو لطيف ودافئ بالنهار، لكن قد يميل للبرودة مساءً.";
-    } else if (data.max < 20) {
-        summary = "🌥️ اليوم الجو بارد نسبياً، خصوصاً في المساء.";
-    } else {
-        summary = "🌤️ الجو معتدل طوال اليوم.";
-    }
+  // --- Weather Summary ---
+  let summary = "";
+  if (cityData.temp_day_max_c >= 35) {
+    summary = "Today is extremely hot. Staying indoors during peak hours is advisable.";
+  } else if (cityData.temp_day_max_c >= 28) {
+    summary = "Warm and pleasant weather expected today, ideal for outdoor plans.";
+  } else if (cityData.precip_mm_day > 0) {
+    summary = "Rainfall is expected today. Carry an umbrella or a light jacket.";
+  } else if (cityData.humidity_pct > 70) {
+    summary = "High humidity levels may make the temperature feel warmer.";
+  } else {
+    summary = "Stable and mild weather conditions throughout the day.";
+  }
 
-    // الرسالة الثانية: النشاط الأنسب حسب السلوك + الطقس
-    let activity = "";
-    if (transport === "Walk/Bike" && data.rainfall === 0) {
-        activity = "🚶 أنصحك بالمشي في الصباح، الهواء نقي ومنعش.";
-    } else if (job === "Outdoor" && data.wind > 20) {
-        activity = "👷 بسبب الرياح القوية، خذ احتياطاتك أثناء العمل الخارجي.";
-    } else if (job === "Office") {
-        activity = "💼 استغل فترة الظهيرة للخروج قليلاً من المكتب واستنشاق الهواء.";
-    } else if (job === "Student" && data.rainfall > 0) {
-        activity = "📚 لا تنسَ المظلة في طريقك إلى الجامعة.";
-    } else {
-        activity = "😊 استمتع بيومك، الأجواء مناسبة لأي نشاط.";
-    }
+  // --- Activity Recommendation ---
+  let advice = "";
+  if (cityData.precip_mm_day > 0 && transport === "Walk/Bike") {
+    advice = "Walking or biking is not recommended due to expected rainfall.";
+  } else if (cityData.wind_speed_ms > 5 && job === "Outdoor") {
+    advice = "Strong winds may affect outdoor work. Ensure safety precautions are in place.";
+  } else if (job === "Office") {
+    advice = "Weather remains stable. Consider short outdoor breaks for fresh air.";
+  } else if (job === "Student" && cityData.temp_day_max_c < 20) {
+    advice = "It is slightly cold today. Dress appropriately for your commute.";
+  } else {
+    advice = "Weather conditions are suitable for all regular activities today.";
+  }
 
-    // عرض النتيجة (رسالتين فقط)
-    document.querySelector(".speech-bubble").innerHTML = `
-        <h1>Weather for ${city}</h1>
-        <p>${summary}<br><br>${activity}</p>
-    `;
+  // --- Display Result ---
+  document.querySelector(".speech-bubble").innerHTML = `
+    <h1>Weather Robot — ${city}</h1>
+    <p>${summary}</p>
+    <p><strong>Recommendation:</strong> ${advice}</p>
+  `;
 });
 </script>
+
+
 </body>
 </html>
